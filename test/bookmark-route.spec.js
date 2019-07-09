@@ -100,7 +100,7 @@ describe('POST endpoints', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'A value for title is required'});
     });
     
     it('should return HTTP status 400 when the POST request is not successful (URL missing or empty)', () => {
@@ -115,7 +115,7 @@ describe('POST endpoints', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'The provided URL did not pass validation'});
     });
 
     it('should return HTTP status 400 when the POST request is not successful (missing description)', () => {
@@ -145,7 +145,7 @@ describe('POST endpoints', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'The provided rating must be a number 1 to 5 inclusive'});
     });
 
     it('should return HTTP status 400 when the POST request is not successful (rating out of range 1 to 5 -> 0)', () => {
@@ -160,7 +160,7 @@ describe('POST endpoints', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'The provided rating must be a number 1 to 5 inclusive'});
     });
 
     it('should return HTTP status 400 when the POST request is not successful (rating out of range 1 to 5 -> 6)', () => {
@@ -175,7 +175,7 @@ describe('POST endpoints', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'The provided rating must be a number 1 to 5 inclusive'});
     });
 
     it('should return HTTP status 400 when the POST request is not successful (rating is NaN -> "invalid")', () => {
@@ -190,7 +190,7 @@ describe('POST endpoints', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'The provided rating could not be converted to a number'});
     });
 });
 
@@ -200,7 +200,7 @@ describe('DELETE endpoints', () => {
             .delete('/bookmarks/inavlidId')
             .set('Authorization', 'Bearer ' + apiToken)
             .expect(400)
-            .expect({'error': 'Invalid request'});
+            .expect({'error': 'Invalid request', 'message': 'The requested bookmark does not exist'});
     });
 
     it('should return HTTP status 204 when the request succeeds', () => {
@@ -266,7 +266,7 @@ describe('URL additional validation tests', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'The provided URL did not pass validation'});
     });
 
     it('should return HTTP status 400 when the POST request is not successful (URL with invalid TLD)', () => {
@@ -281,6 +281,6 @@ describe('URL additional validation tests', () => {
         })
         .set('Accept', 'application/json')
         .expect(400)
-        .expect({'error': 'Invalid request'});
+        .expect({'error': 'Invalid request', 'message': 'The provided URL did not pass validation'});
     });
 });
