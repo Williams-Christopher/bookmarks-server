@@ -23,12 +23,14 @@ bookmarksRouter
         }
         debugger;
         // url not url like? nyet!
+        // using https://www.npmjs.com/package/url-regex
+        // looking at least for a URL with a space in it and a valid TLD
         if(!url || !urlRegex({exact: true, strict: false}).test(url)) {
             logger.error(`Supplied URL failed regex validation: ${url}`);
             return res.status(400).json({'error': 'Invalid request'});
         }
 
-        // description just needs to be a key, it can be whatever includeing an empty string
+        // description just needs to be a key, the value can be whatever including an empty string
         if(!description) {
             if(description !== '') {
                 logger.error(`Description is undefined`);
@@ -49,7 +51,7 @@ bookmarksRouter
         // Get an ID for this validated bookmark
         let newId = uuid();
 
-        // Construct the new boomark object
+        // Construct the new boomark object...
         newBookmark = {
             id: newId,
             title: title,
@@ -58,7 +60,7 @@ bookmarksRouter
             rating: rating
         };
 
-        // and push it on the bookmark store
+        // ...and push it on the bookmark store
         bookmarks.push(newBookmark);
 
         // respond to the client

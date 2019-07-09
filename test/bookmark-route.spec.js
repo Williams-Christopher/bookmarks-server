@@ -3,9 +3,12 @@ const apiToken = process.env.API_TOKEN;
 
 const testGETBookmarkId = '7b825ada-b6df-476d-8fd0-adfff18ceab3';
 const testDELETEBookmarkID = '8bfff525-476e-4aa4-8679-8c2a180b27ec';
-const testUrlGood = 'http://www.example.com';
-const testUrlBadSpace = 'http://www.exam ple.com';
-const testUrlBadTld = 'http://www.example.invalid';
+const testUrl = 'http://www.example.com';
+const testUrlWithSpace = 'http://www.exam ple.com';
+const testUrlWithBadTld = 'http://www.example.invalid';
+const testUrlWithIp = 'http://192.168.168.2';
+const testUrlWithPort = 'http://www.example.com:1234';
+const testUrlSansProtocol = 'www.example.com';
 
 describe('GET endpoints', () => {
     it('the /bookmarks route should return all bookmarks test data in JSON format', () => {
@@ -54,7 +57,7 @@ describe('POST endpoints', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
-            'url': testUrlGood,
+            'url': testUrl,
             'description': 'Example description',
             'rating': '5'
         })
@@ -68,7 +71,7 @@ describe('POST endpoints', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
-            'url': testUrlGood,
+            'url': testUrl,
             'description': 'Example description',
             'rating': '5'
         })
@@ -91,7 +94,7 @@ describe('POST endpoints', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': '',
-            'url': testUrlGood,
+            'url': testUrl,
             'description': 'Example description',
             'rating': '5'
         })
@@ -115,43 +118,13 @@ describe('POST endpoints', () => {
         .expect({'error': 'Invalid request'});
     });
 
-    it('should return HTTP status 400 when the POST request is not successful (URL with space)', () => {
-        return supertest(app)
-        .post('/bookmarks')
-        .set('Authorization', 'Bearer ' + apiToken)
-        .send({
-            'title': 'Example title',
-            'url': testUrlBadSpace,
-            'description': 'Example description',
-            'rating': '5'
-        })
-        .set('Accept', 'application/json')
-        .expect(400)
-        .expect({'error': 'Invalid request'});
-    });
-
-    it('should return HTTP status 400 when the POST request is not successful (URL with invalid TLD)', () => {
-        return supertest(app)
-        .post('/bookmarks')
-        .set('Authorization', 'Bearer ' + apiToken)
-        .send({
-            'title': 'Example title',
-            'url': testUrlBadTld,
-            'description': 'Example description',
-            'rating': '5'
-        })
-        .set('Accept', 'application/json')
-        .expect(400)
-        .expect({'error': 'Invalid request'});
-    });
-
     it('should return HTTP status 400 when the POST request is not successful (missing description)', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
-            'url': testUrlGood,
+            'url': testUrl,
             // Description missing
             'rating': '5'
         })
@@ -166,7 +139,7 @@ describe('POST endpoints', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
-            'url': testUrlGood,
+            'url': testUrl,
             'description': 'Example description',
             'rating': ''
         })
@@ -181,7 +154,7 @@ describe('POST endpoints', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
-            'url': testUrlGood,
+            'url': testUrl,
             'description': 'Example description',
             'rating': '0'
         })
@@ -196,7 +169,7 @@ describe('POST endpoints', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
-            'url': testUrlGood,
+            'url': testUrl,
             'description': 'Example description',
             'rating': '6'
         })
@@ -211,7 +184,7 @@ describe('POST endpoints', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
-            'url': testUrlGood,
+            'url': testUrl,
             'description': 'Example description',
             'rating': 'invalid'
         })
@@ -235,5 +208,79 @@ describe('DELETE endpoints', () => {
         .delete('/bookmarks/' + testDELETEBookmarkID)
         .set('Authorization', 'Bearer ' + apiToken)
         .expect(204)
+    });    
+});
+
+describe('URL additional validation tests', () => {
+    it('should return HTTP status 201 when the POST request is successful (URL with IP address)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlWithIp,
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(201)
+    });
+
+    it('should return HTTP status 201 when the POST request is successful (URL with port)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlWithPort,
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(201)
+    });
+    
+    it('should return HTTP status 201 when the POST request is successful (URL without a protocol)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlSansProtocol,
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(201)
+    });
+
+    it('should return HTTP status 400 when the POST request is not successful (URL with space)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlWithSpace,
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(400)
+        .expect({'error': 'Invalid request'});
+    });
+
+    it('should return HTTP status 400 when the POST request is not successful (URL with invalid TLD)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlWithBadTld,
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(400)
+        .expect({'error': 'Invalid request'});
     });
 });
