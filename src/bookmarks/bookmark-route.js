@@ -1,6 +1,7 @@
 const express = require('express');
 const logger = require('../logger');
 const uuid = require('uuid/v4');
+const urlRegex = require('url-regex');
 
 const bookmarks = require('../store');
 
@@ -14,19 +15,15 @@ bookmarksRouter
     })
     .post(bodyParser, (req, res) => {
         let { title, url, description, rating } = req.body;
-        console.log('title: ', title , ' url: ', url, ' description: ', description, ' rating: ', rating);
         //Perform some validation
         // title missing? reject!
         if(!title || title === '') {
             logger.error(`Supplied title was invalid: ${title}`)
             return res.status(400).json({'error': 'Invalid request'});
         }
-
+        debugger;
         // url not url like? nyet!
-        // this regexp isn't exactly working but leaving it in place for now
-        const urlPattern = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
-        const urlRegex = new RegExp(urlPattern);
-        if(!url || url.match(urlRegex)) {
+        if(!url || !urlRegex({exact: true, strict: false}).test(url)) {
             logger.error(`Supplied URL failed regex validation: ${url}`);
             return res.status(400).json({'error': 'Invalid request'});
         }

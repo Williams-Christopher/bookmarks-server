@@ -3,8 +3,11 @@ const apiToken = process.env.API_TOKEN;
 
 const testGETBookmarkId = '7b825ada-b6df-476d-8fd0-adfff18ceab3';
 const testDELETEBookmarkID = '8bfff525-476e-4aa4-8679-8c2a180b27ec';
+const testUrlGood = 'http://www.example.com';
+const testUrlBadSpace = 'http://www.exam ple.com';
+const testUrlBadTld = 'http://www.example.invalid';
 
-describe('GET routes', () => {
+describe('GET endpoints', () => {
     it('the /bookmarks route should return all bookmarks test data in JSON format', () => {
         return supertest(app)   
         .get('/bookmarks')
@@ -44,15 +47,29 @@ describe('GET routes', () => {
     });
 });
 
-describe('POST routes', () => {
+describe('POST endpoints', () => {
+    it('should return HTTP status 201 when a bookmark is successfully POSTEd', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlGood,
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(201)
+    });
+
     it.skip('should return HTTP status 201 with a proper location header when a bookmark is successfully POSTEd', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
-            'title': 'Supertest test',
-            'url': 'https://www.npmjs.com/package/supertest',
-            'description': 'Supertest docs',
+            'title': 'Example title',
+            'url': testUrlGood,
+            'description': 'Example description',
             'rating': '5'
         })
         .set('Accept', 'application/json')
@@ -74,8 +91,8 @@ describe('POST routes', () => {
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': '',
-            'url': 'https://www.npmjs.com/package/supertest',
-            'description': 'Supertest docs',
+            'url': testUrlGood,
+            'description': 'Example description',
             'rating': '5'
         })
         .set('Accept', 'application/json')
@@ -83,14 +100,44 @@ describe('POST routes', () => {
         .expect({'error': 'Invalid request'});
     });
     
-    it('should return HTTP status 400 when the POST request is not successful (missing or empty url)', () => {
+    it('should return HTTP status 400 when the POST request is not successful (URL missing or empty)', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
-            'title': 'Supertest title',
+            'title': 'Example title',
             'url': '',
-            'description': 'Supertest docs',
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(400)
+        .expect({'error': 'Invalid request'});
+    });
+
+    it('should return HTTP status 400 when the POST request is not successful (URL with space)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlBadSpace,
+            'description': 'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(400)
+        .expect({'error': 'Invalid request'});
+    });
+
+    it('should return HTTP status 400 when the POST request is not successful (URL with invalid TLD)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrlBadTld,
+            'description': 'Example description',
             'rating': '5'
         })
         .set('Accept', 'application/json')
@@ -103,8 +150,8 @@ describe('POST routes', () => {
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
-            'title': 'Supertest test',
-            'url': 'https://www.npmjs.com/package/supertest',
+            'title': 'Example title',
+            'url': testUrlGood,
             // Description missing
             'rating': '5'
         })
@@ -118,9 +165,9 @@ describe('POST routes', () => {
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
-            'title': 'Supertest test',
-            'url': 'https://www.npmjs.com/package/supertest',
-            'description': 'Supertest docs',
+            'title': 'Example title',
+            'url': testUrlGood,
+            'description': 'Example description',
             'rating': ''
         })
         .set('Accept', 'application/json')
@@ -128,14 +175,14 @@ describe('POST routes', () => {
         .expect({'error': 'Invalid request'});
     });
 
-    it('should return HTTP status 400 when the POST request is not successful (rating out of range 1 to 5)', () => {
+    it('should return HTTP status 400 when the POST request is not successful (rating out of range 1 to 5 -> 0)', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
-            'title': 'Supertest test',
-            'url': 'https://www.npmjs.com/package/supertest',
-            'description': 'Supertest docs',
+            'title': 'Example title',
+            'url': testUrlGood,
+            'description': 'Example description',
             'rating': '0'
         })
         .set('Accept', 'application/json')
@@ -143,14 +190,14 @@ describe('POST routes', () => {
         .expect({'error': 'Invalid request'});
     });
 
-    it('should return HTTP status 400 when the POST request is not successful (rating out of range 1 to 5)', () => {
+    it('should return HTTP status 400 when the POST request is not successful (rating out of range 1 to 5 -> 6)', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
-            'title': 'Supertest test',
-            'url': 'https://www.npmjs.com/package/supertest',
-            'description': 'Supertest docs',
+            'title': 'Example title',
+            'url': testUrlGood,
+            'description': 'Example description',
             'rating': '6'
         })
         .set('Accept', 'application/json')
@@ -158,14 +205,14 @@ describe('POST routes', () => {
         .expect({'error': 'Invalid request'});
     });
 
-    it('should return HTTP status 400 when the POST request is not successful (rating is NaN)', () => {
+    it('should return HTTP status 400 when the POST request is not successful (rating is NaN -> "invalid")', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
-            'title': 'Supertest test',
-            'url': 'https://www.npmjs.com/package/supertest',
-            'description': 'Supertest docs',
+            'title': 'Example title',
+            'url': testUrlGood,
+            'description': 'Example description',
             'rating': 'invalid'
         })
         .set('Accept', 'application/json')
@@ -174,7 +221,7 @@ describe('POST routes', () => {
     });
 });
 
-describe('DELETE routes', () => {
+describe('DELETE endpoints', () => {
     it('should return HTTP status 400 if an invalid ID is supplied', () => {
         return supertest(app)
             .delete('/bookmarks/inavlidId')
