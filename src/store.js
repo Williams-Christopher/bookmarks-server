@@ -1,4 +1,4 @@
-bookmarks = [
+module.exports = [
     {
         id: '8bfff525-476e-4aa4-8679-8c2a180b27ec',
         title: 'Test bookmark #1',
@@ -13,6 +13,4 @@ bookmarks = [
         description: 'The ExpressJS site - A really radical framework!',
         rating: 5
     }
-]
-
-module.exports = bookmarks;
+];

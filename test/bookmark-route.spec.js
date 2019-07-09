@@ -51,7 +51,7 @@ describe('GET endpoints', () => {
 });
 
 describe('POST endpoints', () => {
-    it('should return HTTP status 201 when a bookmark is successfully POSTEd', () => {
+    it('should return HTTP status 201 when a bookmark is successfully POSTed', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
@@ -65,7 +65,21 @@ describe('POST endpoints', () => {
         .expect(201)
     });
 
-    it.skip('should return HTTP status 201 with a proper location header when a bookmark is successfully POSTEd', () => {
+    it('should return HTTP status 201 when the bookmark is POSTed with an empty description (optional field)', () => {
+        return supertest(app)
+        .post('/bookmarks')
+        .set('Authorization', 'Bearer ' + apiToken)
+        .send({
+            'title': 'Example title',
+            'url': testUrl,
+            'description':  'Example description',
+            'rating': '5'
+        })
+        .set('Accept', 'application/json')
+        .expect(201)
+    });
+
+    it.skip('should return HTTP status 201 with a proper location header when a bookmark is successfully POSTed', () => {
         return supertest(app)
         .post('/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
@@ -116,21 +130,6 @@ describe('POST endpoints', () => {
         .set('Accept', 'application/json')
         .expect(400)
         .expect({'error': 'Invalid request', 'message': 'The provided URL did not pass validation'});
-    });
-
-    it('should return HTTP status 400 when the POST request is not successful (missing description)', () => {
-        return supertest(app)
-        .post('/bookmarks')
-        .set('Authorization', 'Bearer ' + apiToken)
-        .send({
-            'title': 'Example title',
-            'url': testUrl,
-            // Description missing
-            'rating': '5'
-        })
-        .set('Accept', 'application/json')
-        .expect(400)
-        .expect({'error': 'Invalid request'});
     });
 
     it('should return HTTP status 400 when the POST request is not successful (missing or empty rating)', () => {

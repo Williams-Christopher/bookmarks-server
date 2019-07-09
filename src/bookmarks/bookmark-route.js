@@ -1,3 +1,4 @@
+'use strict'
 const express = require('express');
 const logger = require('../logger');
 const uuid = require('uuid/v4');
@@ -14,31 +15,25 @@ bookmarksRouter
         res.json(bookmarks);
     })
     .post(bodyParser, (req, res) => {
-        let { title, url, description, rating } = req.body;
-        //Perform some validation
-        // title missing? reject!
+        const { title, url, description = '', rating } = req.body;
+        // Perform some validation
+        // Title is required
         if(!title || title === '') {
             logger.error(`Supplied title was invalid: ${title}`)
             return res.status(400).json({'error': 'Invalid request', 'message': 'A value for title is required'});
         }
 
-        // url not url like? nyet!
-        // using https://www.npmjs.com/package/url-regex
-        // looking to at least reject a URL with a space in it and/or an invalid TLD
+        // URL is required
+        // Using https://www.npmjs.com/package/url-regex
+        // Looking to at least reject a URL with a space in it and/or an invalid TLD
         if(!url || !urlRegex({exact: true, strict: false}).test(url)) {
             logger.error(`Provided URL failed regex validation: ${url}`);
             return res.status(400).json({'error': 'Invalid request', 'message': 'The provided URL did not pass validation'});
         }
 
-        // description just needs to be a key, the value can be whatever including an empty string
-        if(!description) {
-            if(description !== '') {
-                logger.error(`Description is undefined`);
-                return res.status(400).json({'error': 'Invalid request'});
-            }
-        }
+        // Description is an optional field, the value of which is defualted if not supplied. No validation for it.
 
-        // rating not a number between 1 and 5 inclusive? nein!
+        // Rating is required
         const ratingNumber = Number(rating);
         if(isNaN(ratingNumber)) {
             logger.error(`Provided rating could no be converted to a number: ${rating}`);
@@ -48,10 +43,8 @@ bookmarksRouter
             return res.status(400).json({'error': 'Invalid request', 'message': 'The provided rating must be a number 1 to 5 inclusive'});
         }
 
-        // Get an ID for this validated bookmark
         const newId = uuid();
 
-        // Construct the new boomark object...
         const newBookmark = {
             id: newId,
             title: title,
@@ -60,10 +53,8 @@ bookmarksRouter
             rating: rating
         };
 
-        // ...and push it on the bookmark store
         bookmarks.push(newBookmark);
 
-        // respond to the client
         logger.info(`A new bookmark was successfully created in the store with ID ${newId}`);
         res.status(201).location(`http://localhost:8000/bookmarks/${newId}`).end();
     });
@@ -73,7 +64,6 @@ bookmarksRouter
     .get((req, res) => {
         const { id } = req.params;
 
-        // get the bookmark, return an error if it doesn't exist
         const bookmark = bookmarks.find(b => b.id == id);
         if(!bookmark) {
             logger.error(`Requested bookmark does not exist for GET: ${id}`);
@@ -85,7 +75,6 @@ bookmarksRouter
     .delete((req, res) => {
         const { id } = req.params;
 
-        // check if the bookmark exists, return an error if not
         const bookmarkIndex = bookmarks.findIndex(b => b.id == id);
         if(bookmarkIndex === -1) {
             logger.error(`Requested bookmark does not exist for DELETE: ${id}`);
