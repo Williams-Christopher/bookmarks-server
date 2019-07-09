@@ -72,7 +72,7 @@ module.exports.deleteBookmark = function(req, res) {
     const bookmarkIndex = bookmarks.findIndex(b => b.id == id);
     if(bookmarkIndex === -1) {
         logger.error(`Requested bookmark does not exist for DELETE: ${id}`);
-        return res.status(400).json({'error': 'Invalid request', 'message': 'The requested bookmark does not exist'});
+        return res.status(404).json({'error': 'Invalid request', 'message': 'The requested bookmark does not exist'});
     }
 
     bookmarks.splice(bookmarkIndex, 1);

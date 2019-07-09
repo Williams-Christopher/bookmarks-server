@@ -194,11 +194,11 @@ describe('POST endpoints', () => {
 });
 
 describe('DELETE endpoints', () => {
-    it('should return HTTP status 400 if an invalid ID is supplied', () => {
+    it('should return HTTP status 404 if an invalid ID is supplied', () => {
         return supertest(app)
             .delete('/bookmarks/inavlidId')
             .set('Authorization', 'Bearer ' + apiToken)
-            .expect(400)
+            .expect(404)
             .expect({'error': 'Invalid request', 'message': 'The requested bookmark does not exist'});
     });
 
