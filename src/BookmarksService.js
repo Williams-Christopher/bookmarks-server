@@ -8,15 +8,25 @@ const BookmarksService = {
     },
 
     insertBookmark(knex, bookmark) {
-        // Implement
+        return knex
+            .insert(bookmark)
+            .into('bookmarks')
+            .returning('*')
+            .then( rows => {
+                return rows[0]
+            });
     },
 
-    updateBookmark(knex, updateData) {
-        // Implement
+    updateBookmark(knex, bookmarkId, updateData) {
+        return knex
+            .where({ id: bookmarkId })
+            .update(updateData);
     },
 
     deleteBookmark(knex, bookmarkId) {
-
+        return knex
+            .where({ id: bookmarkId })
+            .delete();
     },
 };
 
