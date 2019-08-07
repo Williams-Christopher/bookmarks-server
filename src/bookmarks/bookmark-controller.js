@@ -2,11 +2,17 @@ const express = require('express');
 const logger = require('../logger');
 const uuid = require('uuid/v4');
 const urlRegex = require('url-regex');
+const BookmarksService = require('../BookmarksService');
 
 const bookmarks = require('../store');
 
-module.exports.getBookmarks = function(req, res) {
-    res.json(bookmarks);
+module.exports.getBookmarks = function(req, res, next) {
+    const knexInstance = req.app.get('db');
+    return BookmarksService.getBookmarks(knexInstance)
+        .then(bookmarks => {
+            res.json(bookmarks);
+        })
+        .catch(next);
 };
 
 module.exports.postBookmark = function(req, res) {
@@ -54,16 +60,18 @@ module.exports.postBookmark = function(req, res) {
     res.status(201).location(`http://localhost:8000/bookmarks/${newId}`).end();
 };
 
-module.exports.getBookmark = function(req, res) {
+module.exports.getBookmark = function(req, res, next) {
     const { id } = req.params;
 
-    const bookmark = bookmarks.find(b => b.id == id);
-    if(!bookmark) {
-        logger.error(`Requested bookmark does not exist for GET: ${id}`);
-        return res.status(404).json({'error': 'Invalid request', 'message': 'The requested bookmark does not exist'});
-    }
-
-    res.json(bookmark);
+    const knexInstance = req.app.get('db');
+    return BookmarksService.getBookmarkById(knexInstance, id)
+        .then(bookmark => {
+            if(!bookmark) {
+                return res.status(404).json({error: {message: 'Bookmark does not exist.'}});
+            }
+            res.json(bookmark);
+        })
+        .catch(next);
 };
 
 module.exports.deleteBookmark = function(req, res) {
