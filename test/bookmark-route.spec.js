@@ -10,7 +10,7 @@ const testUrlWithIp = 'http://192.168.168.2';
 const testUrlWithPort = 'http://www.example.com:1234';
 const testUrlSansProtocol = 'www.example.com';
 
-describe('GET endpoints', () => {
+describe.skip('GET endpoints', () => {
     it('the /bookmarks route should return all bookmarks test data in JSON format', () => {
         return supertest(app)   
         .get('/bookmarks')
