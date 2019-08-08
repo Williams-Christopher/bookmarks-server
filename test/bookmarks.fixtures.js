@@ -31,6 +31,41 @@ function makeBookmarksArray() {
     ];
 };
 
+function makeTestUrls() {
+    const testUrls = {
+        testUrl: 'http://www.example.com',
+        testUrlWithSpace: 'http://www.exam ple.com',
+        testUrlWithBadTld: 'http://www.example.invalid',
+        testUrlWithIp: 'http://192.168.168.2',
+        testUrlWithPort: 'http://www.example.com:1234',
+        testUrlSansProtocol: 'www.example.com',
+    };
+
+    return testUrls
+}
+
+function makeMaliciousBookmark() {
+    const maliciousBookmark = {
+        id: 911,
+        title: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        url: 'http://www.example.com',
+        description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+        rating: 5,
+    }
+    const sanitizedBookmark = {
+        ...maliciousBookmark,
+        title: 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
+        description: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
+    }
+
+    return {
+        maliciousBookmark,
+        sanitizedBookmark
+    }
+}
+
 module.exports = {
     makeBookmarksArray,
+    makeTestUrls,
+    makeMaliciousBookmark,
 };
