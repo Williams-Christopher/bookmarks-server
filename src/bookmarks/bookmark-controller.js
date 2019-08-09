@@ -95,6 +95,7 @@ module.exports.allBookmarksIdRoute = function(req, res, next) {
             }
             res.bookmark = bookmark;
             next();
+            return null;
         })
         .catch(next);
 }

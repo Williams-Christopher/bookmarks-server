@@ -6,11 +6,10 @@ const apiToken = process.env.API_TOKEN;
 
 describe('POST endpoints', () => {
     it('should return HTTP status 201 when a bookmark is successfully POSTed', () => {
-        const testBookmark = makeBookmarksArray()[0];
         return supertest(app)
             .post('/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
-            .send(testBookmark)
+            .send(makeBookmarksArray()[0])
             .set('Accept', 'application/json')
             .expect(201)
     });
@@ -39,22 +38,23 @@ describe('POST endpoints', () => {
             );
     });
 
-    // TODO: refactor this test to use the id returned from the post
-    it.skip('should return HTTP status 201 with a proper location header when a bookmark is successfully POSTed', () => {
+    it('should return HTTP status 201 with a proper location header when a bookmark is successfully POSTed', () => {
         return supertest(app)
             .post('/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(makeBookmarksArray()[0])
             .set('Accept', 'application/json')
             .expect(201)
-            .end((err, res) => {
-                if(err) {
-                    return done(err);
-                }
-                let includesLocationHeader = res.header['Location'].includes('http://localhost:8000/bookmarks/');
-                expect(includesLocationHeader).to.be.True();
-                done();
-        });
+            // .end((err, res) => {
+            //     if(err) {
+            //         return done(err);
+            //     }
+            //     let includesLocationHeader = res.header['Location'].includes('http://localhost:8000/bookmarks/');
+            //     expect(includesLocationHeader).to.be.True();
+            //     done();
+            .then(res => {
+                expect(res.header.location).to.eql(`http://localhost:8000/bookmarks/${res.body.id}`);
+            });
     });
 
     it('should return HTTP status 201 when the bookmark is POSTed with an empty description (optional field)', () => {
