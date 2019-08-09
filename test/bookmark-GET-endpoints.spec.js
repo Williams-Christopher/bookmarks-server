@@ -54,7 +54,7 @@ describe('GET /bookmark/:id', function() {
         return supertest(app)
             .get('/bookmarks/123456')
             .set('Authorization', 'Bearer ' + apiToken)
-            .expect(404, {error: {message: 'Bookmark does not exist.'}});
+            .expect(404, {error: 'Invalid request', message: 'Bookmark does not exist'});
         });
     });
 
@@ -80,7 +80,7 @@ describe('GET /bookmark/:id', function() {
             return supertest(app)
                 .get(`/bookmarks/${invalidBookmarkId}`)
                 .set('Authorization', 'Bearer ' + apiToken)
-                .expect(404, {error: {message: 'Bookmark does not exist.'}});
+                .expect(404, {error: 'Invalid request', message: 'Bookmark does not exist'});
         });
     });
 });

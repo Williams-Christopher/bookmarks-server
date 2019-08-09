@@ -12,6 +12,7 @@ bookmarksRouter
 
 bookmarksRouter
     .route('/bookmarks/:id')
+        .all(controllers.allBookmarksIdRoute)
         .get(controllers.getBookmark)
         .delete(controllers.deleteBookmark);
 

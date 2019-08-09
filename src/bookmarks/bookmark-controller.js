@@ -85,31 +85,30 @@ module.exports.postBookmark = function(req, res, next) {
         .catch(next);
 };
 
-module.exports.getBookmark = function(req, res, next) {
+module.exports.allBookmarksIdRoute = function(req, res, next) {
     const { id } = req.params;
 
-    const knexInstance = req.app.get('db');
-    return BookmarksService.getBookmarkById(knexInstance, id)
+    BookmarksService.getBookmarkById(req.app.get('db'), id)
         .then(bookmark => {
             if(!bookmark) {
-                return res.status(404).json({error: {message: 'Bookmark does not exist.'}});
+                return res.status(404).json({error: `Invalid request`, message: `Bookmark does not exist`});
             }
-            res.json(bookmark);
+            res.bookmark = bookmark;
+            next();
         })
         .catch(next);
+}
+
+module.exports.getBookmark = function(req, res, next) {
+    res.json(res.bookmark);
 };
 
 module.exports.deleteBookmark = function(req, res) {
     const { id } = req.params;
 
-    const bookmarkIndex = bookmarks.findIndex(b => b.id == id);
-    if(bookmarkIndex === -1) {
-        logger.error(`Requested bookmark does not exist for DELETE: ${id}`);
-        return res.status(404).json({error: 'Invalid request', message: 'The requested bookmark does not exist'});
-    }
-
-    bookmarks.splice(bookmarkIndex, 1);
-
-    logger.info(`Bookmark with ID ${id} was successfully deleted`);
-    res.status(204).end();
+    BookmarksService.deleteBookmark(req.app.get('db'), id)
+        .then(() => {
+            res.status(204).end()
+        })
+        .catch();
 };
