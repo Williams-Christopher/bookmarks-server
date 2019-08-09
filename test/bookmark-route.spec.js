@@ -50,23 +50,6 @@ describe.skip('GET endpoints', () => {
     });
 });
 
-describe('DELETE endpoints', () => {
-    it('should return HTTP status 404 if an invalid ID is supplied', () => {
-        return supertest(app)
-            .delete('/bookmarks/inavlidId')
-            .set('Authorization', 'Bearer ' + apiToken)
-            .expect(404)
-            .expect({'error': 'Invalid request', 'message': 'The requested bookmark does not exist'});
-    });
-
-    it('should return HTTP status 204 when the request succeeds', () => {
-        return supertest(app)
-        .delete('/bookmarks/' + testDELETEBookmarkID)
-        .set('Authorization', 'Bearer ' + apiToken)
-        .expect(204)
-    });    
-});
-
 describe('URL additional validation tests', () => {
     it('should return HTTP status 201 when the POST request is successful (URL with IP address)', () => {
         return supertest(app)
