@@ -14,15 +14,7 @@ const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
 app.use(morgan(morganOption));
 app.use(cors());
 app.use(helmet());
-app.use(function errorHandler(error, req, res, next) {
-    let response;
-    if (NODE_ENV === 'production') {
-        response = { error: { message: 'Server error' } };
-    } else {
-        response = { error };
-    };
-    res.status(500).json(response);
-});
+
 app.use(function validateBearerToken(req, res, next) {
     const apiToken = process.env.API_TOKEN;
     const authToken = req.get('Authorization');
@@ -32,7 +24,18 @@ app.use(function validateBearerToken(req, res, next) {
     next();
 });
 
-app.use(bookmarksRouter);
+app.use('/api/bookmarks', bookmarksRouter);
+
+app.use(function errorHandler(error, req, res, next) {
+    let response;
+    if (NODE_ENV === 'production') {
+        response = { error: { message: 'Server error' } };
+    } else {
+        response = { error };
+    };
+    res.status(500).json(response);
+});
+
 app.get('/', (req, res) => {
     res.end()
 });

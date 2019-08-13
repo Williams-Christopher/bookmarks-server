@@ -79,7 +79,7 @@ module.exports.postBookmark = function(req, res, next) {
             logger.info(`A new bookmark was successfully created in the store with ID ${bookmark.id}`);
             res
                 .status(201)
-                .location(`http://localhost:8000/bookmarks/${bookmark.id}`)
+                .location(`http://localhost:8000/api/bookmarks/${bookmark.id}`)
                 .json(serializeBookmark(bookmark));
         })
         .catch(next);

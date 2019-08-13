@@ -7,7 +7,7 @@ const apiToken = process.env.API_TOKEN;
 describe('POST endpoints', () => {
     it('should return HTTP status 201 when a bookmark is successfully POSTed', () => {
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(makeBookmarksArray()[0])
             .set('Accept', 'application/json')
@@ -17,7 +17,7 @@ describe('POST endpoints', () => {
     it(`should return HTTP status 201 and successfully persist a POSTed bookmark`, () => {
         const testBookmark = makeBookmarksArray()[0];
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
@@ -31,7 +31,7 @@ describe('POST endpoints', () => {
             })
             .then(postRes =>
                 supertest(app)
-                    .get(`/bookmarks/${postRes.body.id}`)
+                    .get(`/api/bookmarks/${postRes.body.id}`)
                     .set('Authorization', 'Bearer ' + apiToken)
                     .set('Accept', 'application/json')
                     .expect(postRes.body)
@@ -40,7 +40,7 @@ describe('POST endpoints', () => {
 
     it('should return HTTP status 201 with a proper location header when a bookmark is successfully POSTed', () => {
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(makeBookmarksArray()[0])
             .set('Accept', 'application/json')
@@ -49,11 +49,11 @@ describe('POST endpoints', () => {
             //     if(err) {
             //         return done(err);
             //     }
-            //     let includesLocationHeader = res.header['Location'].includes('http://localhost:8000/bookmarks/');
+            //     let includesLocationHeader = res.header['Location'].includes('http://localhost:8000/api/bookmarks/');
             //     expect(includesLocationHeader).to.be.True();
             //     done();
             .then(res => {
-                expect(res.header.location).to.eql(`http://localhost:8000/bookmarks/${res.body.id}`);
+                expect(res.header.location).to.eql(`http://localhost:8000/api/bookmarks/${res.body.id}`);
             });
     });
 
@@ -61,18 +61,18 @@ describe('POST endpoints', () => {
         const testBookmark = makeBookmarksArray()[0];
         testBookmark.description = '';
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
-            .expect(201)
+            .expect(201);
     });
 
     it('should return HTTP status 400 when the POST request is not successful (missing or empty title)', () => {
         const testBookmark = makeBookmarksArray()[0];
         testBookmark.title = '';
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
@@ -84,7 +84,7 @@ describe('POST endpoints', () => {
         const testBookmark = makeBookmarksArray()[0];
         testBookmark.url = '';
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
@@ -96,7 +96,7 @@ describe('POST endpoints', () => {
         const testBookmark = makeBookmarksArray()[0];
         testBookmark.rating = '';
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
@@ -108,7 +108,7 @@ describe('POST endpoints', () => {
         const testBookmark = makeBookmarksArray()[0];
         testBookmark.rating = '0';
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
@@ -120,7 +120,7 @@ describe('POST endpoints', () => {
         const testBookmark = makeBookmarksArray()[0];
         testBookmark.rating = '6';
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
@@ -132,7 +132,7 @@ describe('POST endpoints', () => {
         const testBookmark = makeBookmarksArray()[0];
         testBookmark.rating = 'invalid';
         return supertest(app)
-            .post('/bookmarks')
+            .post('/api/bookmarks')
             .set('Authorization', 'Bearer ' + apiToken)
             .send(testBookmark)
             .set('Accept', 'application/json')
@@ -145,7 +145,7 @@ describe('POST endpoints', () => {
 
         it(`removes the XSS attack content`, () => {
             return supertest(app)
-                .post('/bookmarks')
+                .post('/api/bookmarks')
                 .set('Authorization', 'Bearer ' + apiToken)
                 .send(maliciousBookmark)
                 .set('Accept', 'application/json')

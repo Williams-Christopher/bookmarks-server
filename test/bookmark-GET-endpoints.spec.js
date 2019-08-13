@@ -21,11 +21,11 @@ after('Disconnect from the database', () => db.destroy());
 
 afterEach('Truncate the bookmarks table between tests', () => db('bookmarks').truncate());
 
-describe('GET /bookmarks', function() {
+describe('GET /api/bookmarks', function() {
     context('Given an empty database', () => {
         it('responds with 200 and an empty array', () => {
             return supertest(app)
-                .get('/bookmarks')
+                .get('/api/bookmarks')
                 .set('Authorization', 'Bearer ' + apiToken)
                 .expect(200, []);
         });
@@ -39,9 +39,9 @@ describe('GET /bookmarks', function() {
                 .into('bookmarks');
         });
 
-        it('GET /bookmarks responds with 200 and all the bookmarks', () => {
+        it('GET /api/bookmarks responds with 200 and all the bookmarks', () => {
             return supertest(app)
-                .get('/bookmarks')
+                .get('/api/bookmarks')
                 .set('Authorization', 'Bearer ' + apiToken)
                 .expect(200, testBookmarks);
         });
@@ -52,7 +52,7 @@ describe('GET /bookmark/:id', function() {
     context('Given an empty database', () => {
         it('responds with 404', () => {
         return supertest(app)
-            .get('/bookmarks/123456')
+            .get('/api/bookmarks/123456')
             .set('Authorization', 'Bearer ' + apiToken)
             .expect(404, {error: 'Invalid request', message: 'Bookmark does not exist'});
         });
@@ -66,19 +66,19 @@ describe('GET /bookmark/:id', function() {
                 .into('bookmarks');
         });
         
-        it('GET /bookmarks/:id returns 200 and the expected bookmark', () => {
+        it('GET /api/bookmarks/:id returns 200 and the expected bookmark', () => {
         const bookmarkId = 2;
         const expectedBookmark = testBookmarks[bookmarkId - 1];
         return supertest(app)
-            .get(`/bookmarks/${bookmarkId}`)
+            .get(`/api/bookmarks/${bookmarkId}`)
             .set('Authorization', 'Bearer ' + apiToken)
             .expect(200, expectedBookmark);
         });
 
-        it('GET /bookmarks/:id returns 404 when an invalid bookmark is requested', () => {
+        it('GET /api/bookmarks/:id returns 404 when an invalid bookmark is requested', () => {
             const invalidBookmarkId = 123456789;
             return supertest(app)
-                .get(`/bookmarks/${invalidBookmarkId}`)
+                .get(`/api/bookmarks/${invalidBookmarkId}`)
                 .set('Authorization', 'Bearer ' + apiToken)
                 .expect(404, {error: 'Invalid request', message: 'Bookmark does not exist'});
         });

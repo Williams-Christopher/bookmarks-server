@@ -6,12 +6,12 @@ const bodyParser = express.json();
 const controllers = require('./bookmark-controller');
 
 bookmarksRouter
-    .route('/bookmarks')
+    .route('/')
         .get(controllers.getBookmarks)
         .post(bodyParser, controllers.postBookmark);
 
 bookmarksRouter
-    .route('/bookmarks/:id')
+    .route('/:id')
         .all(controllers.allBookmarksIdRoute)
         .get(controllers.getBookmark)
         .delete(controllers.deleteBookmark);

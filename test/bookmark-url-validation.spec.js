@@ -7,7 +7,7 @@ describe('URL validation tests', () => {
 
     it('should return HTTP status 201 when the POST request is successful (URL with IP address)', () => {
         return supertest(app)
-        .post('/bookmarks')
+        .post('/api/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
@@ -21,7 +21,7 @@ describe('URL validation tests', () => {
 
     it('should return HTTP status 201 when the POST request is successful (URL with port)', () => {
         return supertest(app)
-        .post('/bookmarks')
+        .post('/api/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
@@ -35,7 +35,7 @@ describe('URL validation tests', () => {
     
     it('should return HTTP status 201 when the POST request is successful (URL without a protocol)', () => {
         return supertest(app)
-        .post('/bookmarks')
+        .post('/api/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
@@ -49,7 +49,7 @@ describe('URL validation tests', () => {
 
     it('should return HTTP status 400 when the POST request is not successful (URL with space)', () => {
         return supertest(app)
-        .post('/bookmarks')
+        .post('/api/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',
@@ -64,7 +64,7 @@ describe('URL validation tests', () => {
 
     it('should return HTTP status 400 when the POST request is not successful (URL with invalid TLD)', () => {
         return supertest(app)
-        .post('/bookmarks')
+        .post('/api/bookmarks')
         .set('Authorization', 'Bearer ' + apiToken)
         .send({
             'title': 'Example title',

@@ -21,7 +21,7 @@ after('Disconnect from the database', () => db.destroy());
 
 afterEach('Truncate the bookmarks table between tests', () => db('bookmarks').truncate());
 
-describe(`DELETE endpoint /bookmarks/:id`, () => {
+describe(`DELETE endpoint /api/bookmarks/:id`, () => {
     context(`given there are bookmarks in 'bookmarks'`, () => {
         const testBookmarks = makeBookmarksArray();
 
@@ -33,12 +33,12 @@ describe(`DELETE endpoint /bookmarks/:id`, () => {
             const bookmarkToRemove = 3;
             const expectedBookmarks = testBookmarks.filter(bookmark => bookmark.id !== bookmarkToRemove);
             return supertest(app)
-                .delete(`/bookmarks/${bookmarkToRemove}`)
+                .delete(`/api/bookmarks/${bookmarkToRemove}`)
                 .set('Authorization', 'Bearer ' + apiToken)
                 .expect(204)
                 .then(res =>
                     supertest(app)
-                        .get(`/bookmarks`)
+                        .get(`/api/bookmarks`)
                         .set('Authorization', 'Bearer ' + apiToken)
                         .expect(expectedBookmarks)
                 );
@@ -47,7 +47,7 @@ describe(`DELETE endpoint /bookmarks/:id`, () => {
         it(`responds with 404 given a bookmark ID that doesn't exist`, () => {
             const bookmark = 123456;
             return supertest(app)
-                .delete(`/bookmarks/${bookmark}`)
+                .delete(`/api/bookmarks/${bookmark}`)
                 .set('Authorization', 'Bearer ' + apiToken)
                 .expect(404, {error: `Invalid request`, message: `Bookmark does not exist`});
         });
@@ -59,7 +59,7 @@ describe(`DELETE endpoint /bookmarks/:id`, () => {
         it(`responds with 404`, () => {
         const bookmark = 123456;
         return supertest(app)
-            .delete(`/bookmarks/${bookmark}`)
+            .delete(`/api/bookmarks/${bookmark}`)
             .set('Authorization', 'Bearer ' + apiToken)
             .expect(404, {error: `Invalid request`, message: `Bookmark does not exist`});
         });
