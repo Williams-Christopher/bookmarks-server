@@ -18,7 +18,7 @@ const BookmarksService = {
     },
 
     updateBookmark(knex, bookmarkId, updateData) {
-        return knex
+        return knex('bookmarks')
             .where({ id: bookmarkId })
             .update(updateData);
     },
