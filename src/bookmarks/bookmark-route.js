@@ -14,6 +14,7 @@ bookmarksRouter
     .route('/:id')
         .all(controllers.allBookmarksIdRoute)
         .get(controllers.getBookmark)
-        .delete(controllers.deleteBookmark);
+        .delete(controllers.deleteBookmark)
+        .patch(bodyParser, controllers.updateBookmarks);
 
 module.exports = bookmarksRouter;

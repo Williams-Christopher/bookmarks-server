@@ -113,3 +113,19 @@ module.exports.deleteBookmark = function(req, res) {
         })
         .catch();
 };
+
+module.exports.updateBookmarks = function(req, res, next) {
+    const { title, url, description, rating } = req.body;
+    const updatedBookmarkFields = { title, url, description, rating };
+
+    const numberOfValues = Object.values(updatedBookmarkFields).filter(Boolean).length;
+    if(numberOfValues === 0) {
+        return res.status(400).json({error: {message: `At least one of 'title', 'url', description', or 'rating' is required`}})
+    };
+
+    BookmarksService.updateBookmark(req.app.get('db'), req.params.id, updatedBookmarkFields)
+        .then(numRowsUpdated => {
+            return res.status(204).end();
+        })
+        .catch(next);
+};
