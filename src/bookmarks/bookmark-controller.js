@@ -1,10 +1,7 @@
-const express = require('express');
 const logger = require('../logger');
 const urlRegex = require('url-regex');
 const xss = require('xss');
 const BookmarksService = require('./BookmarksService');
-
-const bookmarks = require('../store');
 
 // borrowing from the Blogful drill solution
 // https://github.com/Thinkful-Ed/blogful-api/blob/master/src/articles/articles-router.js
