@@ -106,7 +106,8 @@ module.exports.deleteBookmark = function(req, res) {
 
     BookmarksService.deleteBookmark(req.app.get('db'), id)
         .then(() => {
-            res.status(204).end()
+            logger.info(`A bookmark with id ${req.params.id} was deleted`);
+            res.status(204).end();
         })
         .catch();
 };
@@ -122,6 +123,7 @@ module.exports.updateBookmarks = function(req, res, next) {
 
     BookmarksService.updateBookmark(req.app.get('db'), req.params.id, updatedBookmarkFields)
         .then(numRowsUpdated => {
+            logger.info(`A bookmark with id ${req.params.id} was updated`);
             return res.status(204).end();
         })
         .catch(next);
