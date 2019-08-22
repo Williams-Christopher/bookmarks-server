@@ -16,15 +16,17 @@ app.use(morgan(morganOption));
 app.use(cors());
 app.use(helmet());
 
-// app.use(function validateBearerToken(req, res, next) {
-//     const apiToken = process.env.API_TOKEN;
-//     const authToken = req.get('Authorization');
-//     if(!authToken || authToken.split(' ')[1] !== apiToken) {
-//         logger.error(`Invalid API key in request authorization header`);
-//         return res.status(400).json({error: 'Unauthorized request'});
-//     }
-//     next();
-// });
+app.use(function validateBearerToken(req, res, next) {
+    const apiToken = process.env.API_TOKEN;
+    const authToken = req.get('Authorization');
+    console.log('API_TOKEN: ', apiToken);
+    console.log('Auth token: ', authToken);
+    if(!authToken || authToken.split(' ')[1] !== apiToken) {
+        logger.error(`Invalid API key in request authorization header`);
+        return res.status(400).json({error: 'Unauthorized request'});
+    }
+    next();
+});
 
 app.use('/api/bookmarks', bookmarksRouter);
 
